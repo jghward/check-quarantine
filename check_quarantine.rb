@@ -2,10 +2,11 @@ require 'watir-webdriver'
 require 'headless'
 require 'net/smtp'
 require 'hipchat'
+require 'net/http'
 
 #Google Apps settings
 LOGIN_URL      = 'https://accounts.google.com/login#identifier'
-QUARANTINE_URL = 'https://email-quarantine.google.com/adminreview'
+QUARANTINE_URL = URI('https://email-quarantine.google.com/adminreview')
 LOGIN_EMAIL    = ''
 LOGIN_PASSWORD = ''
 
@@ -51,7 +52,9 @@ browser.button(:id, 'next').click
 browser.text_field(:id, 'Passwd').wait_until_present
 browser.text_field(:id, 'Passwd').set(LOGIN_PASSWORD)
 browser.button(:id, 'signIn').click
-browser.goto(QUARANTINE_URL)
+browser.goto(QUARANTINE_URL.to_s)
+browser.cookies.add "QUANTUM_DISABLE_COOKIE", "QUANTUM_DISABLE_COOKIE", {secure: true, path: "#{QUARANTINE_URL.path}", expire: nil}
+browser.goto(QUARANTINE_URL.to_s)
 Watir::Wait.while { browser.text.match(/Loading \.\.\./) }
 sleep 3
 table = browser.tables[1]
@@ -62,7 +65,7 @@ if table.rows.length > 1
     msg << "---------------\n"
     msg << "#{r.text}\n"
   end
-  msg << QUARANTINE_URL
+  msg << QUARANTINE_URL.to_s
   puts msg if PRINT_RESULTS
   send_email(msg) if SEND_EMAIL
   send_hipchat_notification(msg) if SEND_HIPCHAT_NOTIFICATION
