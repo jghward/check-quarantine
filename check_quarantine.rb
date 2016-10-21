@@ -58,12 +58,12 @@ browser.goto(QUARANTINE_URL.to_s)
 browser.wait
 browser.cookies.add "QUANTUM_DISABLE_COOKIE", "QUANTUM_DISABLE_COOKIE", {secure: true, path: "#{QUARANTINE_URL.path}", expire: nil}
 browser.goto(QUARANTINE_URL.to_s)
-browser.wait
+Watir::Wait.while { browser.text.match(/Loading \.\.\./) }
 sleep 3
 table = browser.tables[1]
 
 if table.rows.length > 1
-  msg = "#{table.rows.length-1} emails are currently in quarantine.\n"
+  msg = "#{table.rows.length-1} #{table.rows.length == 2 ? 'email is' : 'emails are'} currently in quarantine.\n"
   table.rows.each do |r|
     msg << "---------------\n"
     msg << "#{r.text}\n"
