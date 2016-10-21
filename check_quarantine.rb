@@ -12,6 +12,8 @@ LOGIN_PASSWORD = ''
 
 #Email notification settings
 SEND_EMAIL     = false
+SMTP_SERVER    = 'localhost'
+SMTP_PORT      = 25
 SENDER_NAME    = ''
 SENDER_EMAIL   = ''
 RECEIVER_NAME  = ''
@@ -33,8 +35,8 @@ def send_email(msg)
   email << "To: #{RECEIVER_NAME} <#{RECEIVER_EMAIL}>\n"
   email << "Subject: #{EMAIL_SUBJECT}\n\n"
   email << msg
-  Net::SMTP.start('localhost') do |smtp|
-  smtp.send_message(email, "#{SENDER_EMAIL}", "#{RECEIVER_EMAIL}")
+  Net::SMTP.start(SMTP_SERVER, SMTP_PORT) do |smtp|
+    smtp.send_message(email, "#{SENDER_EMAIL}", "#{RECEIVER_EMAIL}")
   end
 end
 
