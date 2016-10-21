@@ -53,9 +53,10 @@ browser.text_field(:id, 'Passwd').wait_until_present
 browser.text_field(:id, 'Passwd').set(LOGIN_PASSWORD)
 browser.button(:id, 'signIn').click
 browser.goto(QUARANTINE_URL.to_s)
+browser.wait
 browser.cookies.add "QUANTUM_DISABLE_COOKIE", "QUANTUM_DISABLE_COOKIE", {secure: true, path: "#{QUARANTINE_URL.path}", expire: nil}
 browser.goto(QUARANTINE_URL.to_s)
-Watir::Wait.while { browser.text.match(/Loading \.\.\./) }
+browser.wait
 sleep 3
 table = browser.tables[1]
 
